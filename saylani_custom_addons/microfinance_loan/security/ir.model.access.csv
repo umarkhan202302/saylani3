@@ -1,8 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-
-access_mfd_loan_request,mfd.loan.request,model_mfd_loan_request,base.group_user,1,1,1,1
-access_mfd_loan_request_line,mfd.loan.request.line,model_mfd_loan_request_line,base.group_user,1,1,1,1
-access_mfd_bank,mfd.bank,model_mfd_bank,base.group_user,1,1,1,1
-
-
-
