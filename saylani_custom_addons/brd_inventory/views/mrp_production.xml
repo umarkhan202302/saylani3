@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="mrp_production_vendor_inherit" model="ir.ui.view">
+            <field name="name">mrp.production.vendor.inherit</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_confirm']" position="before">
+                    <button name="action_hod_approval" invisible="state != 'draft'" string="Move to HOD" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="attributes">
+                    <attribute name="invisible">state != 'to_approve'</attribute>
+                    <attribute name="groups">brd_inventory.group_mrp_hod</attribute>
+                </xpath>
+                <xpath expr="//div[@name='bom_div']" position="after">
+                    <field name="inventory_code"/>
+                    <field name="unit_id"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">draft,to_approve,confirmed,done</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="location_dest_id" string="Warehouse"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

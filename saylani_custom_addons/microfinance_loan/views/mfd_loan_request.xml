@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="mfd_loan_request_tree" model="ir.ui.view">
+            <field name="name">mfd.loan.request.tree</field>
+            <field name="model">mfd.loan.request</field>
+            <field name="arch" type="xml">
+                <tree default_order="create_date desc">
+                    <field name="name"/>
+                    <field name="customer_id"/>
+                    <field name="asset_type"/>
+                    <field name="amount"/>
+                    <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="mfd_loan_request_form" model="ir.ui.view">
+            <field name="name">mfd.loan.request.form</field>
+            <field name="model">mfd.loan.request</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="compute_installment" invisible="state != 'draft'" string="Compute Installment" type="object" class="oe_highlight"/>
+                        <button name="action_to_approve" invisible="state != 'draft'" string="Move to HOD" type="object" class="oe_highlight"/>
+                        <button name="action_approved" invisible="state != 'to_approve'" string="Approve" type="object" groups="microfinance_loan.group_mfd_hod" class="oe_highlight"/>
+                        <button name="action_rejected" invisible="state != 'to_approve'" string="Reject" type="object" groups="microfinance_loan.group_mfd_hod"/>
+                        <button name="action_done" invisible="state != 'approved'" string="Move to Done" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approved,done,rejected"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="asset_type" widget="radio" readonly="state != 'draft'"/>
+                                <field name="customer_id" required="True" readonly="state != 'draft'"/>
+                                <field name="product_id" invisible="asset_type == 'cash'" required="True" readonly="state != 'draft'"/>
+                                <field name="amount" required="True" readonly="state != 'draft'"/>
+                                <field name="currency_id" readonly="state != 'draft'"/>
+                            </group>
+                            <group>
+                                <field name="disbursement_date" required="True" readonly="state not in ('draft','approved')"/>
+                                <field name="installment_period" required="True" readonly="state != 'draft'"/>
+                                <field name="warehouse_loc_id" required="True" domain="[('usage', '=', 'internal'),('replenish_location', '=', True)]" invisible="asset_type == 'cash' or product_id == False" force_save="1" readonly="state in ('done','rejected') and asset_availability == 'not_available' or state in ('done','rejected')"/>
+                                <field name="asset_availability" required="True" invisible="asset_type == 'cash' or product_id == False or state in ('done','rejected')" force_save="1" readonly="True"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Installments">
+                                <field name="loan_reqeust_lines"  readonly="True" >
+                                    <tree editable="bottom">
+                                        <field name="loan_state" readonly="1" column_invisible="True"/>
+                                        <field name="is_payment_done" column_invisible="True"/>
+                                        <field name="currency_id" column_invisible="True" readonly="1"/>
+                                        <field name="loan_request_id" readonly="1"/>
+                                        <field name="installment_id" readonly="1"/>
+                                        <field name="due_date" readonly="1"/>
+                                        <field name="amount" readonly="1" sum="Total"/>
+                                        <field name="state" readonly="1"/>
+                                        <button name="create_pir" string="Create IR" type="object"  invisible="is_payment_done == True or loan_state in ('draft','to_approve','rejected')"/>
+                                        <button name="go_to_pir" string="Go to IR" type="object" class="oe_highlight" invisible="is_payment_done == False"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_mfd_loan_request" model="ir.actions.act_window">
+            <field name="name">MicroFinance Loan Request</field>
+            <field name="res_model">mfd.loan.request</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

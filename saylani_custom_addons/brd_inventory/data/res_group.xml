@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="group_mrp_hod" model="res.groups">
+            <field name="name">HOD Material Request</field>
+        </record>
+    </data>
+</odoo>
